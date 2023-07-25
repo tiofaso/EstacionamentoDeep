@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.time.Duration;
 import java.time.LocalTime;
 
-public class AtualizarHoraConnection {
+public class CarroSaidaConnection {
     private Connection conexao;
     private double valorAtualizado;
     private double valorInicial;
@@ -16,7 +16,7 @@ public class AtualizarHoraConnection {
     private String permanencia;
 
     private Duration duracao;
-    public void atualizaTicket(int db, int id){
+    public void finalizaTicket(int db, int id){
         String sql = "SELECT carroid, entrada , valorpago " +
                 " FROM tb_estacionamento WHERE carroid = '" + id + "'";
 
@@ -41,7 +41,7 @@ public class AtualizarHoraConnection {
             }
 
         }catch (SQLException e) {
-            System.out.println("Não foi possível mostrar o carro selecionado. Veja o motivo a seguir:");
+            System.out.println("Não foi possível mostrar o conteúdo do Rebelde selecionado. Veja o motivo a seguir:");
 
             e.printStackTrace();
         }
@@ -66,8 +66,8 @@ public class AtualizarHoraConnection {
         permanencia = String.valueOf(duracao.toMinutes());
 
         //Atualizando base
-        sql = "UPDATE tb_estacionamento SET valorpago = '"+ valorAtualizado +"' , "+
-                " permanencia = '" + permanencia + "' WHERE carroid = '" + id + "'";
+        sql = "UPDATE tb_estacionamento SET valorpago = '"+ valorAtualizado +"' , " +
+                "saida = '" + LocalTime.now() + "', permanencia = '" + permanencia + "' WHERE carroid = '" + id + "'";
 
         try{
 
@@ -85,6 +85,30 @@ public class AtualizarHoraConnection {
             e.printStackTrace();
         }
 
+        //Dando baixa no carro
+        sql = "UPDATE tb_carro SET estado = 'false' WHERE id = '" + id + "'";
+
+        try{
+
+            if(conexao != null) {
+                Statement statement = conexao.createStatement();
+
+                statement.executeUpdate(sql);
+
+                System.out.println("Ticket de saída atualizado com sucesso na base de dados!");
+            }
+
+        }catch (SQLException e) {
+            System.out.println("Não foi possível atualizar o ticket de saída na base de dados. Veja o motivo a seguir:");
+
+            e.printStackTrace();
+        }
+
+        //Mostra valor a ser pogo
+        System.out.println("\n> PERMANÊNCIA: " + permanencia + " minutos");
+        System.out.println("> TOTAL A PAGAR: R$" + valorAtualizado);
+
     }
+
 
 }

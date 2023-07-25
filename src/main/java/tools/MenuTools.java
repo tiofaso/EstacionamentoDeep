@@ -12,7 +12,6 @@ public class MenuTools {
         menu.put(2, "Atualizar comanda");
         menu.put(3, "Baixa na comanda");
         menu.put(4, "Mostra carros (estacionados)");
-        menu.put(5, "Mostrar carros (do sistema)");
 
         System.out.println("Escolha uma das opções abaixo:");
         for (Integer key : menu.keySet()) {
